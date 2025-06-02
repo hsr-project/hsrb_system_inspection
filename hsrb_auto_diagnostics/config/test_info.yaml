@@ -1,0 +1,78 @@
+# {"key_name": {do_freeze_check, lower_limit, upper_limit}, ...}
+# check_tools.py内 imu_sub_cbで保存しているキーの種類・順序と対応するように設定する
+/**:
+  ros__parameters:
+    imu_check_info_hsrb:
+      ori_y:
+        do_freeze_check: True
+        lower_limit: -1.0
+        upper_limit: 1.0
+      ori_z:
+        do_freeze_check: False
+        lower_limit: 0.0
+        upper_limit: 0.0
+      ori_w:
+        do_freeze_check: False
+        lower_limit: -1.0
+        upper_limit: 1.0
+      ang_vel_x:
+        do_freeze_check: True
+        lower_limit: -0.3
+        upper_limit: 0.3
+      ang_vel_y:
+        do_freeze_check: True
+        lower_limit: -0.3
+        upper_limit: 0.3
+      ang_vel_z:
+        do_freeze_check: True
+        lower_limit: -0.3
+        upper_limit: 0.3
+      linear_acc_x:
+        do_freeze_check: True
+        lower_limit: -1.0
+        upper_limit: 1.0
+      linear_acc_y:
+        do_freeze_check: True
+        lower_limit: -1.0
+        upper_limit: 1.0
+      linear_acc_z:
+        do_freeze_check: True
+        lower_limit: 8.8
+        upper_limit: 10.8
+    imu_check_info_hsrc:
+      ori_y:
+        do_freeze_check: True
+        lower_limit: -1.0
+        upper_limit: 1.0
+      ori_z:
+        do_freeze_check: False
+        lower_limit: 0.0
+        upper_limit: 0.0
+      ori_w:
+        do_freeze_check: False
+        lower_limit: -1.0
+        upper_limit: 1.0
+      ang_vel_x:
+        do_freeze_check: True
+        lower_limit: -0.3
+        upper_limit: 0.3
+      ang_vel_y:
+        do_freeze_check: True
+        lower_limit: -0.3
+        upper_limit: 0.3
+      ang_vel_z:
+        do_freeze_check: True
+        lower_limit: -0.3
+        upper_limit: 0.3
+      linear_acc_x:
+        do_freeze_check: True
+        lower_limit: -1.0
+        upper_limit: 1.0
+      linear_acc_y:
+        do_freeze_check: True
+        lower_limit: -1.0
+        upper_limit: 1.0
+      linear_acc_z:
+        do_freeze_check: True
+        lower_limit: 8.8
+        upper_limit: 10.8

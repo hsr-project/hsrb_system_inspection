@@ -1,0 +1,5 @@
+string device
+float64 rate
+string data_type
+---
+bool done

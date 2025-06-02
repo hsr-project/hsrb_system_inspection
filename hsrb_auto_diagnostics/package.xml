@@ -1,0 +1,26 @@
+<package format="3">
+  <name>hsrb_auto_diagnostics</name>
+  <version>2.0.0</version>
+  <description>Package providing a diagnostic of hsrb devices</description>
+
+  <maintainer email="xr-hsr-support@mail.toyota.co.jp">HSR Support</maintainer>
+
+  <license>BSD 3-clause Clear License</license>
+
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>hsrb_auto_diagnostics_msgs</exec_depend>
+  <exec_depend>tmc_msgs</exec_depend>
+  <exec_depend>tmc_voice_msgs</exec_depend>
+  <exec_depend>iputils-ping</exec_depend>
+  <exec_depend>python3-usb</exec_depend>
+  <exec_depend>pulseaudio-utils</exec_depend>
+  <exec_depend>diagnostic_msgs</exec_depend>
+
+  <test_depend>python3-mock</test_depend>
+  <test_depend>python3-nose</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>
