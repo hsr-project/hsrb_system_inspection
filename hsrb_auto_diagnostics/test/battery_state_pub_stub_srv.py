@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright (c) 2025 TOYOTA MOTOR CORPORATION
+# Copyright (c) 2026 TOYOTA MOTOR CORPORATION
 # All rights reserved.
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted (subject to the limitations in the disclaimer
@@ -46,8 +46,8 @@ class BatteryStatePub(object):
 
     def update_battery_state(self, req, res):
         # Current specifications of tmc_sanyo_battery
-        # In case of error, power_supply_health = BatteryState.POWER_SUPPLY_HEALTH_UNKNOWN
-        # If not an error, power_supply_health = BatteryState.POWER_SUPPLY_HEALTH_GOOD
+        #  In case of error, power_supply_health = BatteryState.POWER_SUPPLY_HEALTH_UNKNOWN
+        #  If not an error, power_supply_health = BatteryState.POWER_SUPPLY_HEALTH_GOOD
         with self._lock:
             if req.data_type == 'ok':
                 self._battery.temperature = 30.0

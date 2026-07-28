@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-# Copyright (c) 2025 TOYOTA MOTOR CORPORATION
+# Copyright (c) 2026 TOYOTA MOTOR CORPORATION
 # All rights reserved.
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted (subject to the limitations in the disclaimer
@@ -39,7 +39,6 @@ def main():
     node = rclpy.create_node('hsrb_xtion_check',
                              allow_undeclared_parameters=True,
                              automatically_declare_parameters_from_overrides=True)
-    node.declare_parameter('action_name', ACTION_NAME_)
     action_name = node.get_parameter('action_name').get_parameter_value().string_value
     xtion_rgb_check_action = CheckAction(node, action_name + '_rgb', RGBImageCheck)  # noqa: F841
     xtion_depth_check_action = CheckAction(  # noqa: F841

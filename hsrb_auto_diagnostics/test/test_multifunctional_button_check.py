@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright (c) 2025 TOYOTA MOTOR CORPORATION
+# Copyright (c) 2026 TOYOTA MOTOR CORPORATION
 # All rights reserved.
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted (subject to the limitations in the disclaimer
@@ -119,7 +119,7 @@ class TestMultifunctionalButtonCheck(unittest.TestCase):
     def test_led_button_ok(self):
         self.set_user_response_client('true')
         self._check_action.execute_cb(GoalHandleStub())
-        # Called in the order of LED on->off
+        # The LED is called in the order of ON -> OFF
         eq_(self._led_sub_data, [True, False])
         eq_(self._check_action._result.error_msg, '')
         self.set_user_response_client('none')
@@ -144,7 +144,7 @@ class TestMultifunctionalButtonCheck(unittest.TestCase):
         # It will fail unless /user_response is stopped in advance
         self.set_user_response_client('none')
 
-        # Set to a test setting that does not light up the LED
+        # Set it to a test configuration where the LED does not light up
         self.node.set_parameters([
             rclpy.parameter.Parameter("is_check_mf_button_led", rclpy.Parameter.Type.BOOL, False)])
 

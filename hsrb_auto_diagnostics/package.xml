@@ -1,6 +1,6 @@
 <package format="3">
   <name>hsrb_auto_diagnostics</name>
-  <version>2.0.0</version>
+  <version>3.0.0</version>
   <description>Package providing a diagnostic of hsrb devices</description>
 
   <maintainer email="xr-hsr-support@mail.toyota.co.jp">HSR Support</maintainer>

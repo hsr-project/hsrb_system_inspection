@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-# Copyright (c) 2025 TOYOTA MOTOR CORPORATION
+# Copyright (c) 2026 TOYOTA MOTOR CORPORATION
 # All rights reserved.
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted (subject to the limitations in the disclaimer
@@ -50,7 +50,7 @@ class PressureSensorWithValveCheck(PressureSensorCheck):
         question = ['?Push the OK button if a card is peeled '
                     'off the pump and dropped.']
 
-        # Lower the arm to safely drop the suctioned object
+        # Lower the arm to ensure safety in case the suction object is dropped
         safe_pose_changer_client = self.node.create_client(
             SafeJointChange, '/safe_pose_changer/change_joint')
         safe_pose_changer_client.wait_for_service(timeout_sec=30.0)
@@ -83,7 +83,7 @@ class PressureSensorWithValveCheck(PressureSensorCheck):
             1)
 
         try:
-            # Suction sensor test before R501
+            # Suction sensor test prior to R501
             suction_check_result = super(
                 PressureSensorWithValveCheck, self).suction_test(
                     _fb, _as)
@@ -96,7 +96,7 @@ class PressureSensorWithValveCheck(PressureSensorCheck):
             valve_pub.publish(Bool(data=True))
             valve_result = tool.wait_for_user_response(
                 _fb, _as, question[0], err_msg[0], 30.0)
-            # Suction sensor remains True (Mechanical specification)
+            # Suction sensor remains True (mechanical specification)
             if not self._pressure_sensor:
                 valve_result.append(err_msg[1])
                 self.node.get_logger().error(valve_result)

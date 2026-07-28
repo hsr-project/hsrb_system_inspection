@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright (c) 2025 TOYOTA MOTOR CORPORATION
+# Copyright (c) 2026 TOYOTA MOTOR CORPORATION
 # All rights reserved.
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted (subject to the limitations in the disclaimer
@@ -176,9 +176,9 @@ class TestImuSensorCheck(unittest.TestCase):
             },
         }
 
-        # Assume that the parameter is always included
+        # It is assumed that the parameter is always included.
         robot_names = ["hsrb", "hsrc"]
-        # The name must always be in this order.
+        # The name must always follow this order.
         param_names = [
             "ori_y",
             "ori_z",

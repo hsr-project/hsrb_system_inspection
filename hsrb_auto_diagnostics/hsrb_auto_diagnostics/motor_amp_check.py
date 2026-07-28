@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-# Copyright (c) 2025 TOYOTA MOTOR CORPORATION
+# Copyright (c) 2026 TOYOTA MOTOR CORPORATION
 # All rights reserved.
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted (subject to the limitations in the disclaimer
@@ -34,15 +34,22 @@ MotorAmp Test Class
 
 
 class MotorAmpCheck(DeviceCheck):
+    PARAM_PATH = 'diag_amp_path'
+
     def __init__(self, *args):
         super().__init__(*args)
 
+        if not self.node.has_parameter(self.PARAM_PATH):
+            self.node.declare_parameter(self.PARAM_PATH, 'Joints/Joint')
+
     def check_sub_data(self, _as):
+        diag_amp_path = self.node.get_parameter(self.PARAM_PATH).get_parameter_value().string_value
+
         try:
             sub_check_tools = check_tools.SubCheck(
                 self.node,
                 '/diagnostics_agg',
                 DiagnosticArray)
-            return sub_check_tools.check_enc_msg(_as)
+            return sub_check_tools.check_enc_msg(_as, diag_amp_path)
         except Exception as e:
             return [str(e)]

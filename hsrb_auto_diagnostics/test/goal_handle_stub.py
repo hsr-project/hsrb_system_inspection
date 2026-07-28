@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright (c) 2025 TOYOTA MOTOR CORPORATION
+# Copyright (c) 2026 TOYOTA MOTOR CORPORATION
 # All rights reserved.
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted (subject to the limitations in the disclaimer
@@ -27,23 +27,15 @@
 
 
 class GoalHandleStub(object):
-    '''Stub to match goal_handle specification used in action
-
-    '''
+    """Stub to align the goal_handle used in action with the specifications"""
 
     def __init__(self):
         self.is_cancel_requested = False
 
     def publish_feedback(*args, **kwargs):
-        '''This function is necessary
-
-        '''
-
+        """This function is necessary"""
         pass
 
     def succeed(*args, **kwargs):
-        '''This function is necessary
-
-        '''
-
+        """This function is necessary"""
         pass

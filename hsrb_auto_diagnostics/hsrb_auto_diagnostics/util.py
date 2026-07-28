@@ -24,31 +24,24 @@
 # LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
 # OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 # DAMAGE.
-from hsrb_auto_diagnostics.check_action import CheckAction
-from hsrb_auto_diagnostics.speaker_check import SpeakerCheck
-import rclpy
-from rclpy.executors import MultiThreadedExecutor
+from rclpy.qos import (
+    QoSProfile,
+    QoSReliabilityPolicy,
+)
 
 
-def main():
-    rclpy.init()
-    node = rclpy.create_node('hsrb_speaker_check',
-                             allow_undeclared_parameters=True,
-                             automatically_declare_parameters_from_overrides=True)
-    speaker_check_action = CheckAction(node, 'speaker', SpeakerCheck)  # noqa: F841
+class ParamQosReliability(QoSProfile):
+    RELIABILITY = 'reliability'
 
-    executor = MultiThreadedExecutor()
-    executor.add_node(node)
+    def __init__(self, node, depth=1):
+        super().__init__(depth=depth)
+        if not node.has_parameter(self.RELIABILITY):
+            node.declare_parameter(self.RELIABILITY, 'RELIABLE')
+        param_reliability = node.get_parameter(self.RELIABILITY).get_parameter_value().string_value
+        self._select_reliability(param_reliability)
 
-    try:
-        executor.spin()
-    except KeyboardInterrupt:
-        node.get_logger().fatal("Keyboard interrupt!")
-
-    executor.shutdown()
-    rclpy.try_shutdown()
-    node.destroy_node()
-
-
-if __name__ == '__main__':
-    main()
+    def _select_reliability(self, param_reliability):
+        if param_reliability == "BEST_EFFORT":
+            self.reliability = QoSReliabilityPolicy.BEST_EFFORT
+        else:
+            self.reliability = QoSReliabilityPolicy.RELIABLE

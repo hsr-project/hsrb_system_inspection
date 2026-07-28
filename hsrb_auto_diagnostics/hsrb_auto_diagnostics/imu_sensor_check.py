@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-# Copyright (c) 2025 TOYOTA MOTOR CORPORATION
+# Copyright (c) 2026 TOYOTA MOTOR CORPORATION
 # All rights reserved.
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted (subject to the limitations in the disclaimer
@@ -28,6 +28,7 @@ import os
 
 import hsrb_auto_diagnostics.check_tools as check_tools
 from hsrb_auto_diagnostics.device_check import DeviceCheck
+from hsrb_auto_diagnostics.util import ParamQosReliability
 from sensor_msgs.msg import Imu
 
 
@@ -37,10 +38,12 @@ ImuSensor Test Class
 
 
 class ImuSensorCheck(DeviceCheck):
-    DEVPATH = "~dev_path"
+    DEVPATH = "dev_path"
     ROBOT_TYPE = "robot_type"
     CHECK_INFO_PARAM = "imu_check_info_"
     NORMAL_FREQUENCY = 90.0
+    PARAM_FREQUENCY = "frequency"
+    PARAM_TOPIC = 'topic'
 
     def __init__(self, *args):
         super().__init__(*args)
@@ -49,6 +52,10 @@ class ImuSensorCheck(DeviceCheck):
             self.node.declare_parameter(self.DEVPATH, "/dev/ttyCTI0")
         if not self.node.has_parameter(self.ROBOT_TYPE):
             self.node.declare_parameter(self.ROBOT_TYPE, "hsrb")
+        if not self.node.has_parameter(self.PARAM_FREQUENCY):
+            self.node.declare_parameter(self.PARAM_FREQUENCY, self.NORMAL_FREQUENCY)
+        if not self.node.has_parameter(self.PARAM_TOPIC):
+            self.node.declare_parameter(self.PARAM_TOPIC, "/imu/data")
 
     def check_connection(self):
         dev_path = self.node.get_parameter(self.DEVPATH).get_parameter_value().string_value
@@ -58,7 +65,7 @@ class ImuSensorCheck(DeviceCheck):
         # test_key = ["name", do_freeze_check, l_limit, u_limit]
         test_info = []
 
-        # The name must be in this order.
+        # name must always follow this order.
         param_names = [
             "ori_y",
             "ori_z",
@@ -71,9 +78,9 @@ class ImuSensorCheck(DeviceCheck):
             "linear_acc_z"
         ]
 
-        # What is stored in param is <name>: {
+        # Stored in param is <name>: {
         #   do_freeze_check: Bool, lower_limit: Double, upper_limit: Double}
-        # The given param in dictionary form is stored with keys connected by dots.
+        # The dictionary-type param is saved with keys connected by ".".
         for param_name in param_names:
             do_freeze_check = self.node.get_parameter(
                 robot_name + "." + param_name + ".do_freeze_check").get_parameter_value().bool_value
@@ -81,15 +88,20 @@ class ImuSensorCheck(DeviceCheck):
                 robot_name + "." + param_name + ".lower_limit").get_parameter_value().double_value
             upper_limit = self.node.get_parameter(
                 robot_name + "." + param_name + ".upper_limit").get_parameter_value().double_value
-            # For formatting during output, ":" was attached to the name, so we follow that rule.
+            # For formatting the output, ":" was added to name, so we follow that.
             test_info.append([param_name + ":", do_freeze_check, lower_limit, upper_limit])
         return test_info
 
     def check_sub_data(self, _as):
         try:
-            sub_check_tools = check_tools.SubCheck(self.node, '/imu/data', Imu)
+            topic = self.node.get_parameter(self.PARAM_TOPIC).get_parameter_value().string_value
+            sub_check_tools = check_tools.SubCheck(self.node, topic, Imu)
+            robot_type = self.node.get_parameter(self.ROBOT_TYPE).get_parameter_value().string_value
             robot_version = os.environ.get("ROBOT_VERSION")
-            robot_type = robot_version.replace('"', '').split('-')[0].lower()
+            if robot_version is not None:
+                robot_type = robot_version.replace('"', '').split('-')[0].lower()
+            frequency = self.node.get_parameter(self.PARAM_FREQUENCY).get_parameter_value().double_value
+
             if self.node.has_parameter(self.CHECK_INFO_PARAM + robot_type):
                 test_info = self.param_to_test_info(self.CHECK_INFO_PARAM + robot_type)
             else:
@@ -101,6 +113,6 @@ class ImuSensorCheck(DeviceCheck):
                     self.node.get_logger().error(
                         "Invalid ROBOT_VERSION:{0}".format(robot_version))
             return sub_check_tools.check_imu_msg(
-                _as, self.NORMAL_FREQUENCY, test_info)
+                _as, frequency, test_info, ParamQosReliability(self.node))
         except Exception as e:
             return [str(e)]

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright (c) 2025 TOYOTA MOTOR CORPORATION
+# Copyright (c) 2026 TOYOTA MOTOR CORPORATION
 # All rights reserved.
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted (subject to the limitations in the disclaimer
@@ -129,7 +129,7 @@ class TestMagneticSensorCheck(unittest.TestCase):
                 if current_msg == config[0]:
                     if config[1] is not None:
                         self.set_sensor_data(*config[1])
-                    # If you send a response as soon as the feedback is updated, it will be ignored.
+                    # Even if a response is sent immediately after the feedback is updated, it will be ignored.
                     self.node.get_clock().sleep_for(Duration(seconds=0.5))
                     response_pub.publish(Bool(data=True))
                     self.node.get_clock().sleep_for(Duration(seconds=0.5))
