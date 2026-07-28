@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-# Copyright (c) 2025 TOYOTA MOTOR CORPORATION
+# Copyright (c) 2026 TOYOTA MOTOR CORPORATION
 # All rights reserved.
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted (subject to the limitations in the disclaimer
@@ -231,9 +231,9 @@ class SubCheck(object):
 
     def frequency_check(self, subscribed_data, subscribed_stamp,
                         sub_duration, expect_frequency):
-        # NOTE: In the conventional method, the wait seconds were determined from the desired frequency
-        #    and judged based on whether it reached the number of received messages.
-        #   In this method, if one is missed before or after, it won't pass, and this happens frequently in ROS 2.
+        # NOTE: In the traditional method, it was determined based on the waiting seconds and the desired frequency.
+        # It was judged by whether the number of received messages reached the expected count.
+        # With this method, if one message is missed before or after, it fails, and this frequently occurs in ROS 2.
         # if len(subscribed_data) < sub_duration * expect_frequency:
         #     self._node.get_logger().error(
         #         '[%s] Frequency:%.2fHz (Expected:more than %.1fHz)' %
@@ -241,7 +241,7 @@ class SubCheck(object):
         #          expect_frequency))
         #     return self._error_msg[2]
 
-        # NOTE: Obtain header.stmap at the same time, look at the timestamp, and calculate the frequency.
+        # NOTE: Simultaneously obtain header.stamp and calculate the frequency by checking the timestamp.
         assert len(subscribed_data) == len(subscribed_stamp)
         estimated_frequency = 0.0
         if len(subscribed_data) == 1:
@@ -253,9 +253,9 @@ class SubCheck(object):
             if (estimated_duration > 1e-6):
                 estimated_frequency = float(len(subscribed_data) - 1) / estimated_duration
 
-        # NOTE: Also want to confirm continuous reception over the entire section, so also check the number of receptions.
+        # NOTE: Since we also want to confirm continuous reception throughout the entire period, we also check the number of received messages.
         expect_data_length = sub_duration * expect_frequency
-        # NOTE: Judgment criteria: Accept up to floor(desired number of receptions * 0.99) and (desired frequency * 0.95).
+        # NOTE: Judgment criteria: Allowable up to floor(desired number of receptions * 0.99) and (desired frequency * 0.95).
         check_result = ((len(subscribed_data) >= int(expect_data_length * 0.99))
                         and (estimated_frequency >= (expect_frequency * 0.95)))
 
@@ -271,8 +271,8 @@ class SubCheck(object):
 
     def freeze_check(self, arg_name, subscribed_data):
         if len(subscribed_data) > 1:
-            if all([data == subscribed_data[0]
-                    for data in subscribed_data[1:]]):
+            if all(data == subscribed_data[0]
+                    for data in subscribed_data[1:]):
                 return arg_name + self._error_msg[3]
 
     def range_check(self, arg_name, subscribed_data, range_min, range_max):
@@ -298,8 +298,11 @@ class SubCheck(object):
         result = []
         subscribed_data, subscribed_stamp = self.subscribe_topic('data', sub_duration, _as, qos_profile=qos_profile)
         if self.sub_success_check(subscribed_data):
-            result.append(self.size_check(subscribed_data,
-                                          expected_data_sizes))
+            # NOTE: By setting the expected data size to 0 or less, size checks can be excluded.
+            if all(expected_data_size > 0
+                   for expected_data_size in expected_data_sizes):
+                result.append(self.size_check(subscribed_data,
+                                              expected_data_sizes))
             result.append(self.frequency_check(subscribed_data, subscribed_stamp,
                           sub_duration, expect_frequency))
             result.append(self.freeze_check('', subscribed_data))
@@ -327,14 +330,14 @@ class SubCheck(object):
         self._node.get_logger().info("  result: %s" % result)
         return make_result(result)
 
-    def check_enc_msg(self, _as, sub_duration=5.0):
+    def check_enc_msg(self, _as, diag_amp_path, sub_duration=5.0):
         result = []
         subscribed_data, _ = self.subscribe_topic(
             'enc', sub_duration, _as)
 
         if self.sub_success_check(subscribed_data):
             for data in subscribed_data[0]:
-                if 'Joints/Joint' in data.name:
+                if diag_amp_path in data.name:
                     if data.level == DiagnosticStatus.ERROR:
                         self._node.get_logger().error(
                             'ERROR:%s -> %s' % (data.name[15:-1], data.message))
@@ -386,8 +389,8 @@ class SubCheck(object):
         return make_result(result)
 
     def check_imu_msg(self, _as, expect_frequency,
-                      test_info, sub_duration=2.0):
-        subscribed_data, subscribed_stamp = self.subscribe_topic('imu', sub_duration, _as)
+                      test_info, qos_profile, sub_duration=2.0):
+        subscribed_data, subscribed_stamp = self.subscribe_topic('imu', sub_duration, _as, qos_profile)
         result = []
         # Message subscription and periodic check
         if self.sub_success_check(subscribed_data):
@@ -410,7 +413,7 @@ class SubCheck(object):
                 if do_freeze_check:
                     result_piece.append(
                         self.freeze_check(key_name, subscribed_data[i]))
-                # NOTE: Because it is now impossible to store None in double type param, set an invalid value separately
+                # NOTE: Since None can no longer be stored in double-type params, set an alternative invalid value.
                 # if lower_limit != 'None' and upper_limit != 'None':
                 if upper_limit - lower_limit > 1e-5:
                     result_piece.append(

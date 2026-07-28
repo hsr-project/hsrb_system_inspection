@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-# Copyright (c) 2025 TOYOTA MOTOR CORPORATION
+# Copyright (c) 2026 TOYOTA MOTOR CORPORATION
 # All rights reserved.
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted (subject to the limitations in the disclaimer
@@ -51,7 +51,7 @@ class ACAdapterCheck(DeviceCheck):
         self.node.get_logger().info(self._ac_adapter)
         return self._ac_adapter
 
-    # Whether it is a list increasing within the range of lower_limit to upper_limit
+    # Check if it is a list that increases within the range of lower_limit~upper_limit
     def check_data_pattern(self, src_list, lower_limit, upper_limit):
         if src_list[0] != lower_limit or src_list[-1] != upper_limit:
             return False
@@ -74,7 +74,7 @@ class ACAdapterCheck(DeviceCheck):
 
         tool = check_tools.Interactive(self.node, '/user_response', Bool)
 
-        # Prompt to insert cables and turn on the power in advance
+        # Prompt to connect the cable and turn on the power in advance
         self.error_msg = tool.wait_for_user_response(
             _fb, _as, question[0], err_msg[0], 30.0)
         if len(self.error_msg) == 0:
@@ -86,8 +86,8 @@ class ACAdapterCheck(DeviceCheck):
             if set(data) != {6}:
                 self.error_msg.append(err_msg[1])
             else:
-                # When the power plug is inserted, the message for the automatic charging terminal increases from 1 to 2
-                # Depending on the timing of the user_response returning
+                # When the power plug is inserted, the message for the automatic charging terminal increases from 1->2
+                # Depending on the timing when user_response is returned
                 # It is highly likely to miss 1, so it's okay if all elements are 2
                 self.error_msg = tool.wait_for_user_response(
                     _fb, _as, question[2], err_msg[0], 30.0)

@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-# Copyright (c) 2025 TOYOTA MOTOR CORPORATION
+# Copyright (c) 2026 TOYOTA MOTOR CORPORATION
 # All rights reserved.
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted (subject to the limitations in the disclaimer
@@ -38,8 +38,8 @@ PressureSensor Test Class
 """
 
 
-# NOTE: The suction-related parts lack unit tests, and messages are not compatible with ROS 2.
-# Need to implement further after waiting for ROS 2 conversion of tmc_drivers/tmc_suction.
+# NOTE: suction-related unit tests are not prepared, and messages are not supported in ROS 2
+# Need to wait for ROS 2 adaptation of tmc_drivers/tmc_suction to continue implementation
 class PressureSensorCheck(DeviceCheck):
     def __init__(self, *args):
         super().__init__(*args)
@@ -50,7 +50,7 @@ class PressureSensorCheck(DeviceCheck):
 
         goal = SuctionControl.Goal(timeout=action_timeout,
                                    suction_on=arg)
-        # NOTE: Interactive.action_client is only called here.
+        # NOTE: Interactive.action_client is only called here
         if not (self._interactive_check_tools.action_client(self._client,
                                                             goal)):
             raise Exception('Wait for suction server TIMEOUT')
@@ -65,7 +65,7 @@ class PressureSensorCheck(DeviceCheck):
         elif len(self.error_msg) > 0:
             return False
 
-    # NOTE: The content of this function is not compatible with ROS 2.
+    # NOTE: The content of this function is not adapted for ROS 2.
     def judge_action_response(self, timeout, expected_state,
                               unexpected_state, err_msg, timeout_msg):
         if self._client.wait_for_result(timeout):
@@ -98,7 +98,7 @@ class PressureSensorCheck(DeviceCheck):
 
         try:
             u"""
-            Abnormal case (Test without suction)
+            Abnormal case (testing without suction)
             """
             self.suction_control(True, Duration(2.0))
             if self.judge_action_response(Duration(3.0),
@@ -107,7 +107,7 @@ class PressureSensorCheck(DeviceCheck):
                                           err_msg[0], err_msg[1]):
 
                 u"""
-                Normal case (Test by suctioning a card)
+                Normal case (testing by suctioning a card)
                 """
                 self.suction_control(True, Duration(40.0))
                 if self.wait_for_user_response_wrapper(

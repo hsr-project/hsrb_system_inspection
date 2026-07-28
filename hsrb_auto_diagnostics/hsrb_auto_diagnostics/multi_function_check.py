@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-# Copyright (c) 2025 TOYOTA MOTOR CORPORATION
+# Copyright (c) 2026 TOYOTA MOTOR CORPORATION
 # All rights reserved.
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted (subject to the limitations in the disclaimer
@@ -129,7 +129,7 @@ class MultifunctionalButtonCheck(DeviceCheck):
         try:
             if is_check_mf_button_led:
                 self.node.get_logger().info("led check true.")
-                # First, check that the LED lights up and turns off (starting from the default inverse state)
+                # First, check that the LED turns on/off (starting from the default reverse state)
                 while (rclpy.ok() and led_pub.get_subscription_count() == 0):
                     self.node.get_clock().sleep_for(Duration(seconds=0.1))
                 led_pub.publish(Bool(data=True))
@@ -139,7 +139,7 @@ class MultifunctionalButtonCheck(DeviceCheck):
                     led_pub.publish(Bool(data=False))
                     if self.wait_for_user_response_wrapper(
                             _fb, _as, question[1], err_msg[0], 10):
-                        # Sync the multifunction button ON/OFF with the LED
+                        # Link the multifunction button ON/OFF with the LED
                         self._user_res_flag = None
                         self._check_tools.publish_feedback(fb_msg[0], _fb, _as)
                         init_time = self.node.get_clock().now()
@@ -156,7 +156,7 @@ class MultifunctionalButtonCheck(DeviceCheck):
                 self.node.get_logger().info("led check false.")
                 while (rclpy.ok() and talk_request_pub.get_subscription_count() == 0):
                     self.node.get_clock().sleep_for(Duration(seconds=0.1))
-                # It speaks when the multifunction button is turned ON
+                # When the multifunction button is ON, it will speak
                 self._check_tools.publish_feedback(fb_msg[1], _fb, _as)
                 self._user_res_flag = None
                 init_time = self.node.get_clock().now()
